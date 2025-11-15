@@ -155,7 +155,7 @@ Summary vs CRAFT:
 
 ---
 
-## 🗂 Repository structure (trimmed)
+## 🗂 Repository structure
 ```
 |East-Craft-Fuse/
 ├── EAST/
