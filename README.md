@@ -65,22 +65,38 @@ python run_fusion.py --img-dir test-images/ch4_test_images --output Polygon-Fusi
 
 ---
 
-## 📈 Evaluation (IoU ≥ 0.5)
+## Evaluation & Results
 
-The table below summarizes the per-model evaluation (Precision / Recall / F1 / TP / Det / GT) and, for each metric, the best single-model baseline and the percentage change that the fusion produced relative to that baseline.
 
-| Metric     | Best single-model baseline (model / value) | EAST | CRAFT | FUSED | Fusion vs baseline (%) |
-|------------|--------------------------------------------:|:----:|:-----:|:-----:|:----------------------:|
-| Precision  | CRAFT / 0.6454                              |0.6010|0.6454 |0.5811 | -9.96%                 |
-| Recall     | EAST / 0.3203                               |0.3203|0.2394 |0.3924 | +22.51%                |
-| F1         | EAST / 0.4179                               |0.4179|0.3492 |0.4684 | +12.10%                |
-| TP (true positives) | EAST / 1675                       |1675  |1252   |2052   | +22.51%                |
-| Det (detections)    | EAST / 2787                       |2787  |1940   |3531   | +26.71%                |
-| GT (ground truth)   | — / 5230                           |5230  |5230   |5230   | —                      |
+Below are the measured evaluation metrics for the run provided. Values are ICDAR-style Precision, Recall, F1, plus True Positives (TP), Detections (Det) and Ground Truth (GT).
 
-Notes:
-- "Best single-model baseline" is the stronger individual model for that metric (between EAST and CRAFT).  
-- Percentage = (FUSED − baseline) / baseline × 100. Negative percentage indicates a drop vs. the baseline.
+| Model | Precision | Recall | F1 | TP | Det | GT |
+|---|---:|---:|---:|---:|---:|---:|
+| EAST | 0.4665 | 0.6259 | 0.5345 | 1300 | 2787 | 2077 |
+| CRAFT | 0.4814 | 0.4497 | 0.4650 | 934 | 1940 | 2077 |
+| FUSED | 0.4257 | 0.7236 | 0.5360 | 1503 | 3531 | 2077 |
+
+### Performance change (FUSED compared to EAST) 🔄
+
+- Precision: 🔽 −0.0408 (−4.08 percentage points) — relative change: −8.75%  
+- Recall: ✅ +0.0977 (+9.77 percentage points) — relative change: +15.62%  
+- F1: ➕ +0.0015 (+0.15 percentage points) — relative change: +0.28%  
+- TP (True Positives): ➕ +203 — relative change: +15.62%  
+- Det (Detections): 🔼 +744 — relative change: +26.70%
+
+Summary vs EAST: 
+- 🔎 Fusion substantially increases Recall and True Positives (+9.77 pp, +203 TP), with a small net F1 improvement (+0.15 pp).
+
+### Performance change (FUSED compared to CRAFT) 🔁
+
+- Precision: 🔽 −0.0557 (−5.57 percentage points) — relative change: −11.58%  
+- Recall: ✅ +0.2739 (+27.39 percentage points) — relative change: +60.90%  
+- F1: ➕ +0.0710 (+7.10 percentage points) — relative change: +15.27%  
+- TP (True Positives): ➕ +569 — relative change: +60.96%  
+- Det (Detections): 🔼 +1591 — relative change: +82.06%
+
+Summary vs CRAFT:
+- 🚀 Fusion delivers very large increases in Recall and F1 (+27.39 pp recall, +7.10 pp F1) and far more true positives (+569).
 
 ---
 
