@@ -19,21 +19,21 @@ A dedicated visual index makes it easy to inspect each image's EAST / CRAFT / FU
 
 <p align="center"><i>EAST (Green)</i></p>
 <p align="center">
-  <img src="EAST\output.visualizations\2.png" width="1200">
+  <img src="EAST\output.visualizations\2.png" width="900">
 </p>
 
 ---
 
 <p align="center"><i>CRAFT (Green)</i></p>
 <p align="center">
-  <img src="CRAFT\visualizations\img_103_viz.png" width="1200">
+  <img src="CRAFT\visualizations\img_103_viz.png" width="900">
 </p>
 
 ---
 
 <p align="center"><i>Comparison of EAST (Blue), CRAFT (Red), and Polygon Fusion (Green)</i></p>
 <p align="center">
-  <img src="Polygon-Fusion\img_107_compare.png" width="1200">
+  <img src="Polygon-Fusion\img_107_compare.png" width="900">
 </p>
 
 
@@ -49,11 +49,21 @@ A dedicated visual index makes it easy to inspect each image's EAST / CRAFT / FU
 
 ---
 
+## Models
+
 ## 🚀 Quickstart (minimal)
-1. Install core dependencies:
+
+### Prerequisites
 ```bash
-pip install shapely craft-text-detector==0.4.3 tqdm opencv-python-headless opencv-python numpy ensemble-boxes matplotlib
+# Create environment
+conda create -n text_detection python=3.8
+conda activate text_detection
+
+# Install dependencies
+pip install -r requirements.txt
+pip install craft-text-detector
 ```
+
 2. Configure paths in the script/notebook:
 - EAST_MODEL_PATH = 'models/frozen_east_text_detection.pb'  
 - CRAFT_MODEL_PATH = 'models/craft_ic15_20k.pth'  
@@ -63,12 +73,48 @@ pip install shapely craft-text-detector==0.4.3 tqdm opencv-python-headless openc
 python run_fusion.py --img-dir test-images/ch4_test_images --output Polygon-Fusion/outputs
 ```
 
+### 📥 Required Data Downloads
+
+**⚠️ Note:** The following datasets are not included in this repository due to size constraints but are required for full reproduction:
+
+1. **ICDAR 2015 Dataset** 
+   - Download test images from [Kaggle - ICDAR 2015](https://www.kaggle.com/datasets/bestofbests9/icdar2015) (search "ICDAR 2015")
+   - Place in: `data/icdar2015/test_images/` (500 images)
+
+2. **Pre-trained Models**
+   - **EAST**: Download from [Kaggle - Frozen EAST Text Detection](https://www.kaggle.com/datasets/yelmurat/frozen-east-text-detection)
+     - File: `frozen_east_text_detection.pb` → `models/`
+   - **CRAFT**: Download from [CRAFT-pytorch Repository](https://github.com/clovaai/CRAFT-pytorch)
+     - File: `craft_ict15_20k.pth` → `models/`
+
+3. **ICDAR 2015 Ground Truth** 
+   - Download ground truth annotations from [ICDAR 2015 Competition](https://rrc.cvc.uab.es/?ch=4&com=downloads)
+   - Place in: `icdar_eval/gt/` 
+   - Required for evaluation metrics (5,230 text instances)
 ---
 
 ## Evaluation & Results
 
+### Dataset
+- **ICDAR 2015 Text Localization**: 500 test images
+- **Ground Truth**: 5,230 text instances
+- **Evaluation Metric**: IoU threshold = 0.5
+- The ICDAR 2015 dataset is used under academic fair-use for research evaluation purposes.
 
-Below are the measured evaluation metrics for the run provided. Values are ICDAR-style Precision, Recall, F1, plus True Positives (TP), Detections (Det) and Ground Truth (GT).
+### ICDAR 2015 Official Protocol
+Evaluated using modified ICDAR 2015 evaluation framework:
+- **Intersection over Union (IoU)** based matching
+- **Precision**: Correctly detected / Total detected
+- **Recall**: Correctly detected / Total ground truth  
+- **F1-Score**: Harmonic mean of precision and recall
+
+**📝 Evaluation Note:** Ground truth data (`icdar_eval/`) is excluded from git due to licensing restrictions.
+Download from [ICDAR 2015 official source](https://rrc.cvc.uab.es/?ch=4&com=downloads) for reproduction.
+
+
+Below are the measured evaluation metrics for the run provided. Values are in ICDAR-format:
+
+Precision, Recall, F1, plus True Positives (TP), Detections (Det) and Ground Truth (GT).
 
 | Model | Precision | Recall | F1 | TP | Det | GT |
 |---|---:|---:|---:|---:|---:|---:|
@@ -132,4 +178,14 @@ Summary vs CRAFT:
 ---
 
 ## ✍️ Author
-Nabil Ahmed — Netaji Subhash Engineering College — B.Tech | AI & ML
+### Nabil Ahmed 
+**Contact Information:**
+- 📧 Email: [nabil13147@gmail.com](mailto:nabil13147@gmail.com)
+- 🐙 GitHub: [@TerrArx](https://github.com/TerrArx)
+- 🔗 Repository: [EAST-Craft-Fuse](https://github.com/TerrArx/East-Craft-Fuse)
+
+## 🤝 Acknowledgments
+
+- **EAST Model**: Pre-trained weights from [Kaggle - Frozen EAST Text Detection](https://www.kaggle.com/datasets/yelmurat/frozen-east-text-detection)
+- **CRAFT Model**: Original implementation and weights from [CRAFT-pytorch](https://github.com/clovaai/CRAFT-pytorch) by Clova AI
+- **ICDAR 2015**: Text localization evaluation dataset and ground truth
