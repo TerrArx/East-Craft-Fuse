@@ -1,0 +1,61 @@
+# Python Cache / Compiled Files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual / Conda Environments
+env/
+venv/
+.venv/
+.conda/
+conda-meta/
+pkgs/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# OS System Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Model Files (large) 
+models/*.pb
+models/*.pth
+
+# Project: Outputs (Auto-Generated)
+
+# Main ensemble outputs
+Polygon-Fusion/outputs/EAST/
+Polygon-Fusion/outputs/CRAFT/
+Polygon-Fusion/outputs/Fused/
+Polygon-Fusion/outputs/Visualization/
+
+# Standalone EAST outputs
+standalone/east/outputs/
+
+# Standalone CRAFT outputs
+standalone/craft/outputs/
+
+# Dataset (optional to ignore)
+# Remove these 3 lines if you want to track dataset
+test-images/ch4_test_images/
+test-images/Challenge4_Test_Task1_GT/
+
+# Temporary Cache / Artifacts
+*.cache
+.cache/
+tmp/
+temp/
+*.tmp
+*.temp
+
