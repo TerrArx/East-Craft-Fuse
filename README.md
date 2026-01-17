@@ -21,7 +21,7 @@ A dedicated visualization collection showcases EAST, CRAFT, and WBF-fused output
 
 <p align="center"><i>EAST Detections (Green)</i></p>
 <p align="center">
-  <img src="WBF/visualizations/a0c4b467-b3cf-40fb-b61a-24f971912004.png" width="900">
+  <img src="EAST/output.visualizations/2.png" width="900">
 </p>
 
 ---
@@ -333,4 +333,5 @@ If you use this work, please cite:
 - Adjust `MODEL_WEIGHTS` to favor the model with higher recall
 
 ---
+
 
