@@ -19,16 +19,16 @@ A weighted box fusion ensemble that combines two scene-text detectors — **EAST
 
 A dedicated visualization collection showcases EAST, CRAFT, and WBF-fused outputs side-by-side.
 
-<p align="center"><i>EAST Detections (Blue)</i></p>
+<p align="center"><i>EAST Detections (Green)</i></p>
 <p align="center">
   <img src="WBF/visualizations/a0c4b467-b3cf-40fb-b61a-24f971912004.png" width="900">
 </p>
 
 ---
 
-<p align="center"><i>CRAFT Detections (Red)</i></p>
+<p align="center"><i>CRAFT Detections (Green)</i></p>
 <p align="center">
-  <img src="WBF/visualizations/66610ed1-7185-44c3-b922-7bc33dcd21cb.png" width="900">
+  <img src="CRAFT/visualizations/img_100_viz.png" width="900">
 </p>
 
 ---
@@ -333,3 +333,4 @@ If you use this work, please cite:
 - Adjust `MODEL_WEIGHTS` to favor the model with higher recall
 
 ---
+
