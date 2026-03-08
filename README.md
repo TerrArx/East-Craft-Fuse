@@ -190,6 +190,50 @@ Precision, Recall, F1, plus True Positives (TP), Detections (Det) and Ground Tru
 
 ---
 
+## 📈 ICDAR-15 Protocol Evaluation Results
+
+The following metrics were obtained using the **ICDAR-15 evaluation protocol** for comprehensive performance assessment:
+
+### Performance Comparison Table
+
+| Model | TP | FP | FN | Precision | Recall | F1-Score |
+|-------|---:|---:|---:|----------:|-------:|---------:|
+| **EAST** | 1506 | 710 | 571 | 67.96% | 72.51% | 70.16% |
+| **CRAFT** | 1677 | 812 | 400 | 67.38% | 80.74% | 73.46% |
+| **WBF (Ensemble)** | 1481 | 332 | 596 | 81.69% | 71.30% | 76.14% |
+
+### Performance Improvement Analysis
+
+#### 🎯 WBF vs EAST
+- **Precision**: +13.73 pp (67.96% → 81.69%) — **+20.21% relative improvement**
+- **Recall**: -1.21 pp (72.51% → 71.30%) — **-1.67% relative change**
+- **F1-Score**: +5.98 pp (70.16% → 76.14%) — **+8.52% relative improvement**
+- **False Positives**: -378 (710 → 332) — **-53.24% reduction**
+- **True Positives**: -25 (1506 → 1481) — **-1.66% change**
+
+**Key Insight:** WBF significantly improves precision through aggressive FP reduction (-53.24%) while maintaining comparable recall, resulting in a **5.98 pp F1-Score gain**.
+
+#### 🚀 WBF vs CRAFT
+- **Precision**: +14.31 pp (67.38% → 81.69%) — **+21.24% relative improvement**
+- **Recall**: -9.44 pp (80.74% → 71.30%) — **-11.69% relative change**
+- **F1-Score**: +2.68 pp (73.46% → 76.14%) — **+3.65% relative improvement**
+- **False Positives**: -480 (812 → 332) — **-59.11% reduction**
+- **True Positives**: -196 (1677 → 1481) — **-11.69% change**
+
+**Key Insight:** WBF trades some recall for substantial precision gains (+14.31 pp), eliminating **59.11% of false positives** while still achieving a **higher F1-Score**.
+
+### 🏆 Ensemble Benefits Summary
+
+The Weighted Box Fusion ensemble achieves:
+- ✅ **Highest Precision (81.69%)** — 13.73-14.31 pp better than individual models
+- ✅ **Highest F1-Score (76.14%)** — 2.68-5.98 pp improvement over baselines
+- ✅ **Lowest False Positive Rate** — 53-59% reduction in FPs
+- ✅ **Balanced Performance** — Optimal precision-recall tradeoff
+
+**Conclusion:** The WBF ensemble successfully fuses EAST and CRAFT predictions to deliver superior precision and F1-score while maintaining competitive recall, making it the most robust model for scene text detection.
+
+---
+
 ## 📂 Repository Structure
 
 ```
