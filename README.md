@@ -65,26 +65,81 @@ pip install opencv-python numpy pandas matplotlib shapely ensemble-boxes tqdm
 pip install craft-text-detector
 ```
 
-### Configuration
+### Workflow Overview
 
-The notebook `wbf.ipynb` contains all configuration parameters:
+The complete pipeline requires three sequential steps:
 
-```python
-# Model weights for fusion (sum should be 1.0)
-MODEL_WEIGHTS = [0.6, 0.4]  # [EAST, CRAFT]
+1. **Generate EAST predictions** using `EAST/east.py`
+2. **Generate CRAFT predictions** using `CRAFT/craft.py`
+3. **Fuse predictions** using `WBF/wbf.py`
 
-# WBF IoU threshold for merging boxes
-IOU_THR = 0.55
+---
 
-# Skip boxes with confidence below this threshold
-SKIP_BOX_THR = 0.001
+### Step 1: Run EAST Detection
 
-# Agreement filtering
-REQUIRE_AGREEMENT = True
-AGREEMENT_IOU_THRESH = 0.15
+Generate EAST text detection predictions:
+
+```bash
+cd EAST
+python east.py
 ```
 
-### Path Setup
+**What it does:**
+- Loads frozen EAST model from `../models/frozen_east_text_detection.pb`
+- Processes all images in `../test-images/ch4_test_images/`
+- Saves predictions to `EAST/output.visualizations/` (internally generated)
+- Detection parameters: confidence threshold = 0.5, NMS threshold = 0.4
+
+**Note:** The EAST script currently performs evaluation but does not save prediction files in ICDAR format. You may need to modify the script to export predictions as `img_N.txt` files to `../outputs/east/` for WBF fusion.
+
+---
+
+### Step 2: Run CRAFT Detection
+
+Generate CRAFT text detection predictions:
+
+```bash
+cd CRAFT
+python craft.py
+```
+
+**What it does:**
+- Loads CRAFT model from `../models/craft_ic15_20k.pth`
+- Processes all images in `../test-images/ch4_test_images/`
+- Saves predictions to `CRAFT/outputs/` as `img_N.txt` files
+- Saves visualizations to `East-Craft/visualizations/`
+- Detection parameters: text threshold = 0.7, link threshold = 0.4
+
+---
+
+### Step 3: Run WBF Fusion
+
+Combine EAST and CRAFT predictions using Weighted Box Fusion:
+
+```bash
+cd WBF
+python wbf.py
+```
+
+**What it does:**
+- Loads EAST predictions from `../outputs/east/`
+- Loads CRAFT predictions from `../outputs/craft/`
+- Applies weighted box fusion with configurable parameters
+- Saves fused predictions to `../outputs/fused/`
+- Generates comparison visualizations
+- Runs ICDAR-15 evaluation on all three models
+
+**WBF Configuration Parameters:**
+
+```python
+MODEL_WEIGHTS = [1, 1]           # Equal weights for EAST and CRAFT
+IOU_THR = 0.45                   # WBF fusion IoU threshold
+SKIP_BOX_THR = 0.30              # Minimum confidence threshold
+REQUIRE_AGREEMENT = True          # Both models must agree
+AGREEMENT_IOU_THRESH = 0.35      # IoU threshold for agreement
+```
+
+**Path Configuration:**
 
 ```python
 BASE_DIR = os.path.dirname(os.getcwd())  # Parent directory
@@ -94,44 +149,51 @@ ICDAR_IMAGE_DIR = os.path.join(BASE_DIR, "test-images", "ch4_test_images")
 GT_DIR = os.path.join(BASE_DIR, "test-images", "Challenge4_Test_Task1_GT")
 
 # Output paths
-EAST_DIR  = os.path.join(BASE_DIR, "outputs", "east")
-CRAFT_DIR = os.path.join(BASE_DIR, "outputs", "craft")
-FUSED_DIR = os.path.join(BASE_DIR, "outputs", "fused")
+EAST_DIR  = os.path.join(OUTPUT_DIR, "east")
+CRAFT_DIR = os.path.join(OUTPUT_DIR, "craft")
+FUSED_DIR = os.path.join(OUTPUT_DIR, "fused")
 ```
-
-### Run Fusion
-
-Open and run `wbf.ipynb` in Jupyter Notebook or VS Code. The notebook will:
-1. Load EAST and CRAFT predictions from `east/` and `craft/` folders
-2. Apply weighted box fusion with configurable parameters
-3. Save fused predictions to `fused/` folder
-4. Generate comparison visualizations in `viz_compare/`
 
 ---
 
-## 📥 Required Data Downloads
+## 📥 Required Data & Models
 
-**⚠️ Note:** The following datasets are not included in this repository due to size constraints but are required for full reproduction:
+**⚠️ Note:** The following datasets and models are not included in this repository due to size constraints but are required for reproduction:
 
 1. **ICDAR 2015 Dataset** 
    - Download test images from [Kaggle - ICDAR 2015](https://www.kaggle.com/datasets/bestofbests9/icdar2015)
-   - Place in: `../test-images/ch4_test_images/` (500 images)
+   - Place in: `test-images/ch4_test_images/` (500 images)
 
 2. **Pre-trained Models**
    - **EAST**: Download from [Kaggle - Frozen EAST Text Detection](https://www.kaggle.com/datasets/yelmurat/frozen-east-text-detection)
-     - File: `frozen_east_text_detection.pb` → `../model/`
+     - File: `frozen_east_text_detection.pb` → `models/`
    - **CRAFT**: Download from [CRAFT-pytorch Repository](https://github.com/clovaai/CRAFT-pytorch)
-     - File: `craft_ic15_20k.pth` → `../model/`
+     - File: `craft_ic15_20k.pth` → `models/`
 
 3. **ICDAR 2015 Ground Truth** 
    - Download ground truth annotations from [ICDAR 2015 Competition](https://rrc.cvc.uab.es/?ch=4&com=downloads)
-   - Place in: `../test-images/Challenge4_Test_Task1_GT/` 
+   - Place in: `test-images/Challenge4_Test_Task1_GT/` 
    - Required for evaluation metrics (5,230 text instances)
 
-4. **Pre-generated Predictions**
-   - EAST predictions → `outputs/east/`
-   - CRAFT predictions → `outputs/craft/`
-   - Each as `img_N.txt` files (N=1 to 500) in ICDAR format
+**Expected Directory Structure:**
+
+```
+parent-folder/
+├── East-Craft-Fuse/           # This repository
+│   ├── EAST/
+│   ├── CRAFT/
+│   └── WBF/
+├── test-images/
+│   ├── ch4_test_images/       # 500 test images
+│   └── Challenge4_Test_Task1_GT/  # Ground truth annotations
+├── models/
+│   ├── frozen_east_text_detection.pb
+│   └── craft_ic15_20k.pth
+└── outputs/
+    ├── east/                  # Generated by EAST script
+    ├── craft/                 # Generated by CRAFT script
+    └── fused/                 # Generated by WBF script
+```
 
 ---
 
@@ -154,47 +216,9 @@ Evaluated using modified ICDAR 2015 evaluation framework:
 **📝 Evaluation Note:** Ground truth data (`../test-images/Challenge4_Test_Task1_GT/`) is excluded from git due to licensing restrictions.
 Download from [ICDAR 2015 official source](https://rrc.cvc.uab.es/?ch=4&com=downloads) for reproduction.
 
-### Performance Metrics
+### Performance Metrics (ICDAR-15 Protocol)
 
-Below are the measured evaluation metrics using WBF fusion. Values are in ICDAR-format:
-
-Precision, Recall, F1, plus True Positives (TP), Detections (Det) and Ground Truth (GT).
-
-| Model | Precision | Recall | F1 | TP | Det | GT |
-|---|---:|---:|---:|---:|---:|---:|
-| EAST | 0.4665 | 0.6259 | 0.5345 | 1300 | 2787 | 2077 |
-| CRAFT | 0.4814 | 0.4497 | 0.4650 | 934 | 1940 | 2077 |
-| FUSED (WBF) | 0.4832 | 0.6892 | 0.5686 | 1432 | 2963 | 2077 |
-
-### Performance Change (FUSED vs EAST) 🔄
-
-- Precision: ➕ +0.0167 (+1.67 percentage points) — relative change: +3.58%  
-- Recall: ✅ +0.0633 (+6.33 percentage points) — relative change: +10.12%  
-- F1: ➕ +0.0341 (+3.41 percentage points) — relative change: +6.38%  
-- TP (True Positives): ➕ +132 — relative change: +10.15%  
-- Det (Detections): 🔼 +176 — relative change: +6.31%
-
-**Summary vs EAST:**
-- 🎯 WBF fusion increases Recall and F1 significantly (+6.33 pp recall, +3.41 pp F1) while maintaining similar precision, with +132 additional true positives detected.
-
-### Performance Change (FUSED vs CRAFT) 🔁
-
-- Precision: ➕ +0.0018 (+0.18 percentage points) — relative change: +0.37%  
-- Recall: ✅ +0.2395 (+23.95 percentage points) — relative change: +53.26%  
-- F1: ➕ +0.1036 (+10.36 percentage points) — relative change: +22.28%  
-- TP (True Positives): ➕ +498 — relative change: +53.32%  
-- Det (Detections): 🔼 +1023 — relative change: +52.73%
-
-**Summary vs CRAFT:**
-- 🚀 WBF fusion delivers massive improvements in Recall and F1 (+23.95 pp recall, +10.36 pp F1) with nearly unchanged precision, detecting +498 additional true positives.
-
----
-
-## 📈 ICDAR-15 Protocol Evaluation Results
-
-The following metrics were obtained using the **ICDAR-15 evaluation protocol** for comprehensive performance assessment:
-
-### Performance Comparison Table
+The following metrics were obtained using the **ICDAR-15 evaluation protocol**:
 
 | Model | TP | FP | FN | Precision | Recall | F1-Score |
 |-------|---:|---:|---:|----------:|-------:|---------:|
@@ -237,27 +261,26 @@ The Weighted Box Fusion ensemble achieves:
 ## 📂 Repository Structure
 
 ```
-outputs/
-├── wbf.ipynb                    # Main fusion notebook
-├── east/                        # EAST predictions (img_1.txt - img_500.txt)
-│   ├── img_1.txt
-│   ├── img_2.txt
-│   └── ...
-├── craft/                       # CRAFT predictions (img_1.txt - img_500.txt)
-│   ├── img_1.txt
-│   ├── img_2.txt
-│   └── ...
-├── fused/                       # WBF fused predictions (img_1.txt - img_500.txt)
-│   ├── img_1.txt
-│   ├── img_2.txt
-│   └── ...
-├── WBF/
-│   └── visualizations/          # Comparison visualizations (PNG images)
-│       ├── 17c98e4d-bcda-48da-971c-e0478cfc22c7.png
-│       ├── a0c4b467-b3cf-40fb-b61a-24f971912004.png
-│       └── ...
-├── Project-Synopis-final.pdf    # Project documentation
-└── README.md                    # This file
+East-Craft-Fuse/
+├── README.md                    # Project documentation (this file)
+├── requirements.txt             # Python dependencies
+├── Project-Synopis.pdf          # Project synopsis and details
+├── .gitignore                   # Git ignore rules
+│
+├── EAST/                        # EAST detection module
+│   ├── east.py                  # EAST detection script
+│   └── output.visualizations/   # EAST visualization outputs
+│
+├── CRAFT/                       # CRAFT detection module
+│   ├── craft.py                 # CRAFT detection script
+│   └── visualizations/          # CRAFT visualization outputs
+│
+└── WBF/                         # Weighted Box Fusion module
+    ├── wbf.py                   # WBF ensemble fusion script
+    └── visualizations/          # WBF comparison visualizations
+        ├── 17c98e4d-bcda-48da-971c-e0478cfc22c7.png
+        ├── ae5458bc-5eee-45dd-b1e7-2ff44f8cc341.png
+        └── ...
 ```
 
 ---
