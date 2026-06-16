@@ -133,7 +133,7 @@ python wbf.py
 
 ```python
 MODEL_WEIGHTS = [1, 1]           # Equal weights for EAST and CRAFT
-IOU_THR = 0.45                   # WBF fusion IoU threshold
+IOU_THR = 0.50                   # WBF fusion IoU threshold
 SKIP_BOX_THR = 0.30              # Minimum confidence threshold
 REQUIRE_AGREEMENT = True          # Both models must agree
 AGREEMENT_IOU_THRESH = 0.35      # IoU threshold for agreement
