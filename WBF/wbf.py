@@ -94,7 +94,7 @@ def run_fusion():
     """Run Weighted Box Fusion on all images in the dataset."""
     # Fusion parameters
     MODEL_WEIGHTS = [1, 1]
-    IOU_THR = 0.45
+    IOU_THR = 0.50
     SKIP_BOX_THR = 0.30
     REQUIRE_AGREEMENT = True
     AGREEMENT_IOU_THRESH = 0.35
